@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Data Flow</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Data&nbsp;Flow <span class="subtitle">Oracle &rarr; PostgreSQL migration</span></h1>
+    <nav>
+      <button class="tab active" data-tab="connections">1 · Connections</button>
+      <button class="tab" data-tab="tables">2 · Tables</button>
+      <button class="tab" data-tab="migrate">3 · Migrate &amp; Sync</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Connections ===== -->
+    <section id="connections" class="panel active">
+      <div class="cols">
+        <div class="card">
+          <h2>Oracle (source)</h2>
+          <label>Host <input id="o_host" placeholder="oracle-host" /></label>
+          <label>Port <input id="o_port" value="1521" /></label>
+          <label>Service name <input id="o_service" placeholder="ORCLPDB1" /></label>
+          <label>User <input id="o_user" /></label>
+          <label>Password <input id="o_password" type="password" /></label>
+          <label>Schema / owner <input id="o_schema" placeholder="(defaults to user)" /></label>
+          <div class="row">
+            <button id="o_save">Save</button>
+            <button id="o_test" class="secondary">Test</button>
+            <span id="o_status" class="status"></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>PostgreSQL (target)</h2>
+          <label>Host <input id="p_host" placeholder="localhost" /></label>
+          <label>Port <input id="p_port" value="5432" /></label>
+          <label>Database <input id="p_dbname" /></label>
+          <label>User <input id="p_user" /></label>
+          <label>Password <input id="p_password" type="password" /></label>
+          <label>Target schema <input id="p_target_schema" value="public" /></label>
+          <div class="row">
+            <button id="p_save">Save</button>
+            <button id="p_test" class="secondary">Test</button>
+            <span id="p_status" class="status"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Tables ===== -->
+    <section id="tables" class="panel">
+      <div class="row">
+        <button id="load_tables">Load tables from Oracle</button>
+        <button id="select_all" class="secondary">Select all</button>
+        <button id="select_none" class="secondary">Select none</button>
+        <button id="save_selection">Save selection</button>
+        <input id="filter" placeholder="filter…" />
+        <span id="tables_status" class="status"></span>
+      </div>
+      <div id="table_list" class="tablelist"></div>
+    </section>
+
+    <!-- ===== Migrate & Sync ===== -->
+    <section id="migrate" class="panel">
+      <div class="row">
+        <button id="create_tables">Create selected tables in Postgres</button>
+        <button id="compare" class="secondary">Compare row counts</button>
+        <button id="sync_selected">Sync selected</button>
+        <span id="migrate_status" class="status"></span>
+      </div>
+      <table id="compare_table" class="grid">
+        <thead>
+          <tr><th>Oracle table</th><th>PG table</th><th>Oracle rows</th><th>PG rows</th><th>Diff</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h3>Run log</h3>
+      <pre id="log"></pre>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

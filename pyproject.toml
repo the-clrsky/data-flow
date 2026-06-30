@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "data-flow"
+version = "0.1.0"
+description = "Selective Oracle to PostgreSQL table & data migration with a web GUI"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Sadman" }]
+keywords = ["oracle", "postgresql", "migration", "etl", "database"]
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "oracledb>=2.2",
+    "psycopg[binary]>=3.1",
+    "pydantic>=2",
+]
+
+[project.optional-dependencies]
+dev = ["ruff", "pytest"]
+
+[project.scripts]
+data-flow = "dataflow.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+dataflow = ["static/*"]
+
+[tool.ruff]
+line-length = 100

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# App state (contains connection details!)
+*.db
+data-flow.db
+
+# Secrets / local config
+.env
+.env.local
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
