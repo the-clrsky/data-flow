@@ -5,14 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Data Flow</title>
   <link rel="stylesheet" href="/static/style.css" />
+  <link rel="icon" href="/static/favicon.ico" />
 </head>
 <body>
   <header>
-    <h1>Data&nbsp;Flow <span class="subtitle">Oracle &rarr; PostgreSQL migration</span></h1>
+    <h1><img src="/static/favicon.ico" alt="" class="brand-icon" />Data&nbsp;Flow <span class="subtitle">Oracle &rarr; PostgreSQL migration</span></h1>
     <nav>
       <button class="tab active" data-tab="connections">1 · Connections</button>
       <button class="tab" data-tab="tables">2 · Tables</button>
-      <button class="tab" data-tab="migrate">3 · Migrate &amp; Sync</button>
+      <button class="tab" data-tab="columns">3 · Columns</button>
+      <button class="tab" data-tab="migrate">4 · Migrate &amp; Sync</button>
+      <button class="tab" data-tab="history">5 · History</button>
     </nav>
   </header>
 
@@ -59,10 +62,45 @@
         <button id="select_all" class="secondary">Select all</button>
         <button id="select_none" class="secondary">Select none</button>
         <button id="save_selection">Save selection</button>
+        <button id="show_row_counts" class="secondary">Show row counts (approx.)</button>
         <input id="filter" placeholder="filter…" />
         <span id="tables_status" class="status"></span>
       </div>
       <div id="table_list" class="tablelist"></div>
+    </section>
+
+    <!-- ===== Columns ===== -->
+    <section id="columns" class="panel">
+      <div class="cols" style="grid-template-columns: 280px 1fr;">
+        <div class="card">
+          <h2>Selected tables</h2>
+          <div class="row">
+            <button id="mapping_refresh" class="secondary">Refresh status</button>
+          </div>
+          <div id="mapping_summary" class="mapping-list"></div>
+        </div>
+
+        <div class="card">
+          <h2 id="col_table_title">Pick a table on the left</h2>
+          <label>Target Postgres table
+            <input id="col_pg_table" placeholder="(defaults to lowercased Oracle name)" disabled />
+          </label>
+          <label class="checkbox-label">
+            <input id="col_fast_load" type="checkbox" disabled />
+            Drop/recreate constraints &amp; indexes for faster sync (this table)
+          </label>
+          <table id="col_grid" class="grid">
+            <thead>
+              <tr><th>Oracle column</th><th>Oracle type</th><th>Target name</th><th>Postgres type</th><th>Skip</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="row">
+            <button id="col_save" disabled>Save mapping</button>
+            <span id="columns_status" class="status"></span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ===== Migrate & Sync ===== -->
@@ -70,19 +108,45 @@
       <div class="row">
         <button id="create_tables">Create selected tables in Postgres</button>
         <button id="compare" class="secondary">Compare row counts</button>
-        <button id="sync_selected">Sync selected</button>
+        <button id="dry_run" class="secondary">Dry run</button>
+        <button id="sync_selected">Sync all selected</button>
+        <button id="sync_mismatched" class="secondary">Sync mismatched only</button>
         <span id="migrate_status" class="status"></span>
       </div>
+      <div id="drift_panel"></div>
+      <div id="checkpoint_panel"></div>
+      <div id="dryrun_panel"></div>
       <table id="compare_table" class="grid">
         <thead>
-          <tr><th>Oracle table</th><th>PG table</th><th>Oracle rows</th><th>PG rows</th><th>Diff</th><th>Status</th></tr>
+          <tr><th>Oracle table</th><th>PG table</th><th>Oracle rows</th><th>PG rows</th><th>Diff</th><th>Status</th><th>Actions</th></tr>
         </thead>
         <tbody></tbody>
       </table>
       <h3>Run log</h3>
       <pre id="log"></pre>
     </section>
+
+    <!-- ===== History ===== -->
+    <section id="history" class="panel">
+      <div class="row">
+        <button id="history_refresh" class="secondary">Refresh</button>
+        <span id="history_status" class="status"></span>
+      </div>
+      <table id="history_table" class="grid">
+        <thead>
+          <tr>
+            <th>Table</th><th>PG table</th><th>Started</th><th>Duration</th>
+            <th>Loaded</th><th>Skipped</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
   </main>
+
+  <footer class="app-footer">
+    © 2026 Sadman Rahamat Bishal — <a href="https://sadmanbishal.com" target="_blank" rel="noopener noreferrer">sadmanbishal.com</a>
+  </footer>
 
   <script src="/static/app.js"></script>
 </body>

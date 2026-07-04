@@ -55,7 +55,22 @@ def pg_type(col):
     return "text"
 
 
-def coldef(col, pg_name):
-    """Return a single column definition line for CREATE TABLE."""
+def coldef(col, pg_name, pg_type_value):
+    """Return a single column definition line for CREATE TABLE.
+
+    `pg_type_value` is the final, resolved Postgres type (the default from
+    `pg_type()`, or a user-picked override) - callers decide which.
+    """
     null = "" if col["nullable"] else " NOT NULL"
-    return f'"{pg_name}" {pg_type(col)}{null}'
+    return f'"{pg_name}" {pg_type_value}{null}'
+
+
+# Manual override choices offered in the column-mapping UI's type dropdown.
+# Deliberately plain (no length/precision) - Postgres parses the incoming
+# COPY text into whatever the declared column type is, so an override like
+# NUMBER -> "text" or "boolean" needs no value transform code on our side.
+PG_TYPE_CHOICES = [
+    "smallint", "integer", "bigint", "numeric", "real", "double precision",
+    "boolean", "text", "varchar", "char", "bytea",
+    "date", "timestamp", "timestamptz", "time", "interval", "uuid", "jsonb",
+]

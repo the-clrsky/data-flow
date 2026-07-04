@@ -16,7 +16,8 @@ body {
   font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
 header { padding: 16px 24px; border-bottom: 1px solid var(--line); }
-h1 { margin: 0 0 12px; font-size: 18px; font-weight: 600; }
+h1 { margin: 0 0 12px; font-size: 18px; font-weight: 600; display: flex; align-items: center; }
+.brand-icon { width: 20px; height: 20px; margin-right: 8px; border-radius: 4px; }
 .subtitle { font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 8px; }
 h2 { margin: 0 0 12px; font-size: 15px; }
 h3 { margin: 18px 0 6px; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
@@ -38,6 +39,11 @@ input {
   color: var(--text); font-size: 14px;
 }
 input#filter, input#o_port, input#p_port { width: auto; display: inline-block; }
+label.checkbox-label {
+  display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 13px;
+}
+label.checkbox-label input[type="checkbox"] { display: inline; width: auto; margin: 0; }
+label.checkbox-label:has(input:disabled) { opacity: .5; }
 .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 12px 0; }
 button {
   background: var(--accent); color: #fff; border: none; padding: 8px 16px;
@@ -48,13 +54,18 @@ button:disabled { opacity: .5; cursor: default; }
 .status { font-size: 13px; }
 .status.ok { color: var(--ok); }
 .status.err { color: var(--err); }
-.tablelist { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 4px 18px; margin-top: 12px; }
-.tablelist label { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--text); font-size: 13px; }
-.tablelist input { width: auto; display: inline; margin: 0; }
+.status.warn { color: var(--warn); }
+.tablelist { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 18px; margin-top: 12px; }
+.tablelist label { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--text); font-size: 13px; }
+.tablelist input { width: auto; display: inline; margin: 3px 0 0; flex-shrink: 0; }
+.tablelist .table-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.tablelist .table-name { overflow-wrap: anywhere; }
+.tablelist .badge { align-self: flex-start; }
 .grid { width: 100%; border-collapse: collapse; margin-top: 12px; }
 .grid th, .grid td { text-align: left; padding: 7px 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
 .grid th { color: var(--muted); font-weight: 500; }
-.grid td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.grid td.num { text-align: left; font-variant-numeric: tabular-nums; }
+.grid button.row-sync-btn { padding: 4px 12px; font-size: 12px; }
 .match { color: var(--ok); }
 .mismatch { color: var(--err); }
 .pending { color: var(--muted); }
@@ -63,3 +74,79 @@ pre#log {
   padding: 12px; max-height: 320px; overflow: auto; font-size: 12.5px;
   white-space: pre-wrap; word-break: break-word;
 }
+
+/* ---- column mapping page ---- */
+.mapping-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.mapping-item {
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px;
+  cursor: pointer; background: var(--panel);
+}
+.mapping-item:hover { border-color: var(--accent); }
+.mapping-item.active { border-color: var(--accent); background: #16202b; }
+.mapping-item-name { font-size: 13px; }
+.mapping-item-badges { margin-top: 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+.badge {
+  display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px;
+  background: #223047; color: var(--accent);
+}
+.badge.warn { background: #3a2f14; color: var(--warn); }
+.badge.err { background: #3a1f1e; color: var(--err); }
+.badge.muted { background: #232c34; color: var(--muted); }
+#col_grid input.col-target {
+  width: auto; display: inline-block; margin: 0; padding: 5px 8px; font-size: 13px;
+}
+#col_grid select.col-pgtype {
+  width: 190px; margin: 0; padding: 5px 8px; font-size: 13px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px; color: var(--text);
+  text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+}
+#col_grid input[type="checkbox"] { width: auto; display: inline; margin: 0; }
+#col_grid input:disabled, #col_grid select:disabled { opacity: .4; }
+
+/* ---- schema drift banner ---- */
+.drift-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #3a1f1e; border: 1px solid var(--err); border-radius: 8px;
+  padding: 10px 14px; margin: 12px 0; font-size: 13px;
+}
+.drift-item button { flex-shrink: 0; }
+
+/* ---- checkpoint (resume) banner ---- */
+.checkpoint-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #2a2410; border: 1px solid var(--warn); border-radius: 8px;
+  padding: 10px 14px; margin: 12px 0; font-size: 13px;
+}
+.checkpoint-item .actions { display: flex; gap: 8px; flex-shrink: 0; }
+.checkpoint-item button { flex-shrink: 0; }
+
+/* ---- dry run preview ---- */
+.dryrun-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px 16px; margin: 12px 0; font-size: 13px;
+}
+.dryrun-card h4 { margin: 0 0 8px; font-size: 14px; }
+.dryrun-card pre {
+  background: #0b0f14; border: 1px solid var(--line); border-radius: 6px;
+  padding: 10px; font-size: 12px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+}
+.dryrun-meta { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); margin-bottom: 8px; }
+
+/* ---- sync history ---- */
+#history_table tr.errors-row td { padding: 0; border-bottom: 1px solid var(--line); }
+#history_table .errors-detail {
+  background: #0b0f14; padding: 10px 16px; font-size: 12.5px; max-height: 240px; overflow: auto;
+}
+#history_table .errors-detail div { padding: 2px 0; }
+#history_table button.link {
+  background: transparent; color: var(--accent); border: none; padding: 0;
+  font-size: 12.5px; cursor: pointer; text-decoration: underline;
+}
+
+/* ---- footer ---- */
+.app-footer {
+  padding: 14px 24px; margin-top: 12px; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 11.5px; text-align: center;
+}
+.app-footer a { color: var(--muted); text-decoration: underline; }
+.app-footer a:hover { color: var(--accent); }
